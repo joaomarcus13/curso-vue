@@ -1,9 +1,15 @@
+<!-- eslint-disable vue/no-multiple-template-root -->
 <template>
+  <modal-factory></modal-factory>
   <router-view></router-view>
 </template>
 
 <script>
-
+  import ModalFactory from './components/ModalFactory'
+  export default 
+  {
+    components: {ModalFactory}
+  }
 </script>
 
 <style>
