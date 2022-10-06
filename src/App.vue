@@ -1,24 +1,34 @@
 <!-- eslint-disable vue/no-multiple-template-root -->
 <template>
-  <modal-factory></modal-factory>
-  <router-view></router-view>
+  <modal-factory />
+  <router-view />
 </template>
 
 <script>
-  import ModalFactory from './components/ModalFactory'
-  export default 
-  {
-    components: {ModalFactory}
-  }
-</script>
+import { watch } from 'vue'
+import ModalFactory from './components/ModalFactory'
+import { useRouter, useRoute } from 'vue-router'
+import services from './services'
+import { setCurrentUser } from './store/user'
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+export default {
+  components: { ModalFactory },
+  setup() {
+    const router = useRouter()
+    const route = useRoute()
+
+    watch(() => route.path, async () => {
+      if (route.meta.hasAuth) {
+        const token = window.localStorage.getItem('token')
+        if (!token) {
+          router.push({ name: 'Home' })
+          return
+        }
+
+        const { data } = await services.users.getMe()
+        setCurrentUser(data)
+      }
+    })
+  }
 }
-</style>
+</script>
